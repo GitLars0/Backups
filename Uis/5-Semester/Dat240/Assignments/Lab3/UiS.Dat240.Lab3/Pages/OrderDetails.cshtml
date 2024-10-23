@@ -1,0 +1,73 @@
+@page "{orderId:Guid}"
+@using UiS.Dat240.Lab3.Core.Domain.Ordering
+@using UiS.Dat240.Lab3.Core.Domain.Fulfillment
+@model Lab3.Pages.OrderDetailsModel
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h2>Order Details</h2>
+<div>
+    <p>Id: @Model.Order.Id</p>
+    <p>Status: @Model.Order.Status</p>
+    <p>Order Date: @Model.Order.OrderDate</p>
+</div>
+<div>
+    <h3>Customer Information</h3>
+    <p>Name: @Model.Order.Customer.Name</p>
+    <p>Building: @Model.Order.Location.Building</p>
+    <p>Room Numer: @Model.Order.Location.RoomNumber</p>
+    <p>Notes: @Model.Order.Location.Notes</p>
+</div>
+
+<div>
+    <h3>Order Items</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Order.OrderLines)
+            {
+                <tr>
+                    <td>@item.ItemName</td>
+                    <td>@item.Amount</td>
+                    <td>@item.Price</td>
+                    <td>@(item.Price * item.Amount)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+  <h3>Invoice Details</h3>
+    <p>Id: @Model.Invoice.Id</p>
+    <p>Amount: @Model.Invoice.Amount</p>
+    <p>Status: @Model.Invoice.Status</p>
+<h3>Shipper info</h3>
+@if (Model.Order.Status == Status.Placed){
+    <div>
+        <p>No shipper</p>
+        <form method="post">
+            <label>Assign Shipper</label>
+            <input type="text" name="shipperName"/>
+            <button type="submit">Assign</button>
+        </form>
+    </div>
+}
+
+
+@if (Model.Order.Status == Status.Shipped){
+    <div>
+        <p>Id: @Model.Offer.Reimbursement.Shipper.Id</p>
+        <p>Shipper Name: @Model.Offer.Shipper.Name</p>
+
+    </div>
+
+
+}
