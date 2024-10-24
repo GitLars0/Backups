@@ -25,6 +25,7 @@ public class ShopContext : DbContext
 	public DbSet<FoodItem> FoodItems { get; set; } = null!;
 	public DbSet<ShoppingCart> ShoppingCart { get; set; } = null!;
 	public DbSet<UiS.Dat240.Lab3.Core.Domain.Ordering.Customer> Customers {get; set;} = null!;
+	public DbSet<Core.Domain.Invoicing.Customer> Customer {get; set;} = null!;
 	public DbSet<Order> Orders {get; set; } = null!;
 	public DbSet<Offer> Offers {get; set;} = null!;
 	public DbSet<Invoice> Invoices {get; set;} = null!;

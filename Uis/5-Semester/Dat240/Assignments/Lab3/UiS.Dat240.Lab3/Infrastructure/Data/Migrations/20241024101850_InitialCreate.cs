@@ -12,6 +12,18 @@ namespace UiS.Dat240.Lab3.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Customer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
@@ -21,20 +33,6 @@ namespace UiS.Dat240.Lab3.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Reimbursement",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ShipperId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
-                    InvoiceId = table.Column<Guid>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reimbursement", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,8 +55,8 @@ namespace UiS.Dat240.Lab3.Migrations
                     OrderId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Amount = table.Column<decimal>(type: "TEXT", nullable: false),
                     CustomerId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Address_Building = table.Column<string>(type: "TEXT", nullable: true),
-                    Address_RoomNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    Address_Building = table.Column<string>(type: "TEXT", nullable: false),
+                    Address_RoomNumber = table.Column<string>(type: "TEXT", nullable: false),
                     Address_Notes = table.Column<string>(type: "TEXT", nullable: true),
                     Status = table.Column<int>(type: "INTEGER", nullable: false)
                 },
@@ -66,9 +64,9 @@ namespace UiS.Dat240.Lab3.Migrations
                 {
                     table.PrimaryKey("PK_Invoices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Invoices_Customers_CustomerId",
+                        name: "FK_Invoices_Customer_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "Customers",
+                        principalTable: "Customer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -98,25 +96,19 @@ namespace UiS.Dat240.Lab3.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Offers",
+                name: "Reimbursement",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    OrderId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ReimbursementId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ShipperId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    ShipperId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: false),
+                    InvoiceId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Offers", x => x.Id);
+                    table.PrimaryKey("PK_Reimbursement", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Offers_Reimbursement_ReimbursementId",
-                        column: x => x.ReimbursementId,
-                        principalTable: "Reimbursement",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Offers_Shipper_ShipperId",
+                        name: "FK_Reimbursement_Shipper_ShipperId",
                         column: x => x.ShipperId,
                         principalTable: "Shipper",
                         principalColumn: "Id");
@@ -139,6 +131,31 @@ namespace UiS.Dat240.Lab3.Migrations
                         name: "FK_OrderLine_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Offers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    OrderId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ReimbursementId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ShipperId = table.Column<Guid>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Offers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Offers_Reimbursement_ReimbursementId",
+                        column: x => x.ReimbursementId,
+                        principalTable: "Reimbursement",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Offers_Shipper_ShipperId",
+                        column: x => x.ShipperId,
+                        principalTable: "Shipper",
                         principalColumn: "Id");
                 });
 
@@ -166,6 +183,11 @@ namespace UiS.Dat240.Lab3.Migrations
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reimbursement_ShipperId",
+                table: "Reimbursement",
+                column: "ShipperId");
         }
 
         /// <inheritdoc />
@@ -181,13 +203,16 @@ namespace UiS.Dat240.Lab3.Migrations
                 name: "OrderLine");
 
             migrationBuilder.DropTable(
+                name: "Customer");
+
+            migrationBuilder.DropTable(
                 name: "Reimbursement");
 
             migrationBuilder.DropTable(
-                name: "Shipper");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Shipper");
 
             migrationBuilder.DropTable(
                 name: "Customers");

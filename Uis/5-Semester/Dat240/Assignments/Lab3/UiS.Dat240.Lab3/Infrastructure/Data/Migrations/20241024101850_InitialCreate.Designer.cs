@@ -11,7 +11,7 @@ using UiS.Dat240.Lab3.Infrastructure.Data;
 namespace UiS.Dat240.Lab3.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20241023210408_InitialCreate")]
+    [Migration("20241024101850_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -101,6 +101,8 @@ namespace UiS.Dat240.Lab3.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ShipperId");
+
                     b.ToTable("Reimbursement");
                 });
 
@@ -117,6 +119,20 @@ namespace UiS.Dat240.Lab3.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Shipper");
+                });
+
+            modelBuilder.Entity("UiS.Dat240.Lab3.Core.Domain.Invoicing.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customer");
                 });
 
             modelBuilder.Entity("UiS.Dat240.Lab3.Core.Domain.Invoicing.Invoice", b =>
@@ -257,26 +273,37 @@ namespace UiS.Dat240.Lab3.Migrations
                     b.Navigation("Shipper");
                 });
 
+            modelBuilder.Entity("UiS.Dat240.Lab3.Core.Domain.Fulfillment.Reimbursement", b =>
+                {
+                    b.HasOne("UiS.Dat240.Lab3.Core.Domain.Fulfillment.Shipper", "Shipper")
+                        .WithMany()
+                        .HasForeignKey("ShipperId");
+
+                    b.Navigation("Shipper");
+                });
+
             modelBuilder.Entity("UiS.Dat240.Lab3.Core.Domain.Invoicing.Invoice", b =>
                 {
-                    b.HasOne("UiS.Dat240.Lab3.Core.Domain.Ordering.Customer", "Customer")
+                    b.HasOne("UiS.Dat240.Lab3.Core.Domain.Invoicing.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("UiS.Dat240.Lab3.Core.Domain.Ordering.Location", "Address", b1 =>
+                    b.OwnsOne("UiS.Dat240.Lab3.Core.Domain.Invoicing.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("InvoiceId")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Building")
+                                .IsRequired()
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("Notes")
                                 .HasColumnType("TEXT");
 
                             b1.Property<string>("RoomNumber")
+                                .IsRequired()
                                 .HasColumnType("TEXT");
 
                             b1.HasKey("InvoiceId");

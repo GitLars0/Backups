@@ -13,11 +13,11 @@ namespace UiS.Dat240.Lab3.Core.Domain.Ordering.Services;
 
 public class OrderingService : IOrderingService{
     private readonly ShopContext _db;
-    private readonly IMediator _mediator;
 
-    public OrderingService(ShopContext db, IMediator mediator){
+
+    public OrderingService(ShopContext db){
         _db = db;
-        _mediator = mediator;
+
     }
     public async Task<int> PlaceOrder(Location location, string customerName, OrderLineDto[] orderLines){
         var customer = await _db.Customers.SingleOrDefaultAsync(c => c.Name == customerName);
